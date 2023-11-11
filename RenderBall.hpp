@@ -4,8 +4,9 @@
 
 class RenderBall {
 public:
+  RenderBall();
   void render(BallSim sim);
 
 private:
-  std::vector<std::vector<std::vector<Ball>>> prevMap;
+  std::vector<std::vector<bool>> prevMap;
 };

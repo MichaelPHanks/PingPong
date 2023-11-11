@@ -4,14 +4,19 @@
 #include <vector>
 
 BallSim::BallSim(std::uint8_t width, std::uint8_t height)
-    : width(width), height(height) {
+    : width(width), height(height), playerSize(height / 5) {
   for (std::uint8_t i = 0; i < height; i++) {
+    playerMap.push_back(false);
     std::vector<std::vector<Ball>> newVec;
     map.push_back(newVec);
     for (std::uint8_t j = 0; j < width; j++) {
       std::vector<Ball> evenNewerVec;
       map[i].push_back(evenNewerVec);
     }
+  }
+
+  for (int l = 0; l < playerSize; l++) {
+    playerMap.at(l) = true;
   }
 }
 
@@ -42,12 +47,38 @@ void BallSim::update() {
           Ball ball = map[i][j][k];
           std::pair<std::uint8_t, std::uint8_t> prev = ball.getPrev();
           std::pair<std::uint8_t, std::uint8_t> current = ball.getCurrent();
-          ball.setPrev(current.first, current.second);
+
           int newX = current.first - prev.first;
           int newY = current.second - prev.second;
 
-          ball.setCurrent(current.first + newX, current.second + newY);
-          newMap[current.second + newY][current.first + newX].push_back(ball);
+          if (current.first + newX >= width) {
+            if (newX == 1 && newY == 1) {
+              ball.setPrev(width, current.second);
+              ball.setCurrent(width - 1, current.second + newY);
+              newMap[current.second + newY][width - 1].push_back(ball);
+            }
+          } else if (current.second + newY >= height) {
+            if (newX == 1 && newY == 1) {
+              ball.setPrev(current.first + newX, height - 1);
+              ball.setCurrent(current.first + newX + 1, height - 2);
+              newMap[height - 2][current.first + newX + 1].push_back(ball);
+            }
+          } else if (current.second + newY < 0) {
+            if (newX == 1 && newY == -1) {
+              ball.setPrev(current.first + newX, 0);
+              ball.setCurrent(current.first + newX + 1, 1);
+              newMap[1][current.first + newX + 1].push_back(ball);
+            }
+
+          }
+
+          else {
+            ball.setPrev(current.first, current.second);
+
+            ball.setCurrent(current.first + newX, current.second + newY);
+
+            newMap[current.second + newY][current.first + newX].push_back(ball);
+          }
         }
       }
     }
@@ -69,3 +100,42 @@ bool BallSim::getCell(std::uint8_t x, std::uint8_t y) {
 std::uint8_t BallSim::getWidth() { return width; }
 
 std::uint8_t BallSim::getHeight() { return height; }
+
+std::uint8_t BallSim::getPlayerSize() { return playerSize; }
+
+bool BallSim::getPlayerCell(std::uint8_t y) { return playerMap[y]; }
+
+void BallSim::movePlayer(char input) {
+  if (input == 'w') {
+    if (!playerMap[0]) {
+      int location{};
+      for (int i = 0; i < playerMap.size(); i++) {
+        if (playerMap[i]) {
+          location = i;
+          break;
+        }
+      }
+      for (int j = 0; j < playerSize; j++) {
+
+        playerMap[location - 1] = true;
+        playerMap[location] = false;
+        location += 1;
+      }
+    }
+  } else if (input == 's') {
+    if (!playerMap[playerMap.size() - 1]) {
+      int location{};
+      for (int i = playerMap.size() - 1; i > 0; i--) {
+        if (playerMap[i]) {
+          location = i;
+          break;
+        }
+      }
+      for (int j = 0; j < playerSize; j++) {
+        playerMap[location + 1] = true;
+        playerMap[location] = false;
+        location--;
+      }
+    }
+  }
+}
