@@ -44,16 +44,16 @@ void RenderBall::render(BallSim sim) {
 
   // Render Player Side
 
-  for (int k = 0; k < sim.getHeight(); k++) {
+  for (std::uint8_t k = 0; k < sim.getHeight(); k++) {
     rlutil::locate(2, k + 3);
 
     if (sim.getPlayerCell(k)) {
-      rlutil::setChar('0');
+      rlutil::setChar('|');
 
     } else {
       rlutil::setChar(' ');
     }
   }
-
+  rlutil::locate(1, 1);
   rlutil::showcursor();
 }

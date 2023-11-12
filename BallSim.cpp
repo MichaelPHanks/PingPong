@@ -51,25 +51,56 @@ void BallSim::update() {
           int newX = current.first - prev.first;
           int newY = current.second - prev.second;
 
+          // Things to still implement: corner cases
+
+          // If we hit the right side of the map (enemy)
           if (current.first + newX >= width) {
             if (newX == 1 && newY == 1) {
-              ball.setPrev(width, current.second);
-              ball.setCurrent(width - 1, current.second + newY);
-              newMap[current.second + newY][width - 1].push_back(ball);
+              ball.setPrev(current.first, current.second);
+              ball.setCurrent(current.first - 1, current.second + 1);
+              newMap[current.second + 1][current.first - 1].push_back(ball);
+            } else if (newX == 1 && newY == -1) {
+              ball.setPrev(current.first, current.second);
+              ball.setCurrent(current.first - 1, current.second - 1);
+              newMap[current.second - 1][current.first - 1].push_back(ball);
             }
-          } else if (current.second + newY >= height) {
+          }
+          // If we hit the bottom of the map
+          else if (current.second + newY >= height) {
             if (newX == 1 && newY == 1) {
-              ball.setPrev(current.first + newX, height - 1);
-              ball.setCurrent(current.first + newX + 1, height - 2);
-              newMap[height - 2][current.first + newX + 1].push_back(ball);
+              ball.setPrev(current.first, current.second);
+              ball.setCurrent(current.first + 1, current.second - 1);
+              newMap[current.second - 1][current.first + 1].push_back(ball);
+            } else if (newX == -1 && newY == 1) {
+              ball.setPrev(current.first, current.second);
+              ball.setCurrent(current.first - 1, current.second - 1);
+              newMap[current.second - 1][current.first - 1].push_back(ball);
             }
-          } else if (current.second + newY < 0) {
+          }
+          // If we hit the top of the map
+          else if (current.second + newY < 0) {
             if (newX == 1 && newY == -1) {
-              ball.setPrev(current.first + newX, 0);
-              ball.setCurrent(current.first + newX + 1, 1);
-              newMap[1][current.first + newX + 1].push_back(ball);
+              ball.setPrev(current.first, current.second);
+              ball.setCurrent(current.first + 1, current.second + 1);
+              newMap[current.second + 1][current.first + 1].push_back(ball);
+            } else if (newX == -1 && newY == -1) {
+              ball.setPrev(current.first, current.second);
+              ball.setCurrent(current.first - 1, current.second + 1);
+              newMap[current.second + 1][current.first - 1].push_back(ball);
             }
 
+          }
+          // If we hit the left side of the map (player)
+          else if (current.first + newX < 0) {
+            if (newX == -1 && newY == 1) {
+              ball.setPrev(current.first, current.second);
+              ball.setCurrent(current.first + 1, current.second + 1);
+              newMap[current.second + 1][current.first + 1].push_back(ball);
+            } else if (newX == -1 && newY == -1) {
+              ball.setPrev(current.first, current.second);
+              ball.setCurrent(current.first + 1, current.second - 1);
+              newMap[current.second - 1][current.first + 1].push_back(ball);
+            }
           }
 
           else {

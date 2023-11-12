@@ -12,13 +12,16 @@ int main() {
   Ball firstBall = Ball(10, 10);
   sim.insertBall(firstBall);
   sim.insertBall(Ball(1, 1));
+  sim.insertBall(Ball(32, 15));
+  sim.insertBall(Ball(2, 7));
   RenderBall renderer;
 
   while (true) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    sim.update();
     renderer.render(sim);
+    sim.update();
+
     char key = rlutil::nb_getch();
     sim.movePlayer(key);
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
 }
